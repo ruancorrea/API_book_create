@@ -1,19 +1,21 @@
 const express = require('express');
-const app = express();
+const bodyParser = require('body-parser')
 
 const mongoose = require('mongoose');
 
-require('./models/book');
+require('./models/Book');
 const Book = mongoose.model('books');
 
 const cors = require('cors');
+const app = express();
+
 
 app.use(express.json());
 
 app.use((req, res, next) =>{
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", 'GET,POST,PUT,DELETE');
-    app.use(cors);
+    app.use(cors());
     next();
 })
 
@@ -25,6 +27,7 @@ mongoose.connect("mongodb://localhost/book_api",  {
 }).catch((err) => {
     console.log("Houve um erro ao se conectar ao mongoDB: " + err)
 });
+
 
 // abrindo dados
 app.get("/book", (req, res) =>{
@@ -40,17 +43,19 @@ app.get("/book", (req, res) =>{
 
 // salvando dados
 app.post("/book", (req, res) => {
+    console.log(req.body);
+
     const book = Book.create(req.body, (err) =>{
         if(err) return res.status(400).json({
             error: true,
             message: "Error: Book não foi adicionado com sucesso."
         })
-
+        console.log("pudim")
         return res.json({
             error: false,
             message: "Book adicionado com sucesso."
         })
-    })
+    }) 
 })
 
 // editando dados
